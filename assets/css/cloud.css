@@ -1,0 +1,25 @@
+.cloud-login{max-width:500px;margin:8vh auto;padding:28px;}
+.cloud-login p{margin:16px 0;}
+.cloud-bar{margin-bottom:20px;}
+.cloud-bar .actions{margin-top:8px;}
+@media(max-width:560px){.cloud-login{margin:24px 12px;}.cloud-bar .actions{flex-wrap:wrap;}}
+.cloud-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.cloud-bar .actions { margin:0; }
+.cloud-login h1 { margin-top:14px; }
+.demo-steps { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 0 22px; border:1px solid #c9e1d6; border-radius:16px; background:#eaf6ee; padding:16px 20px; }
+.demo-step-caption { font-size:13px; font-weight:700; color:#3f6957; }
+.demo-step-copy h2 { font-size:19px; line-height:1.45; margin:3px 0 5px; }
+.demo-step-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.demo-step-actions a { padding:9px 4px; }
+.demo-step-actions .btn, .cloud-bar button { min-height:44px; }
+@media (max-width: 740px) {
+  .cloud-bar, .demo-steps { align-items:flex-start; flex-direction:column; }
+  .demo-steps { padding:13px 14px; gap:10px; }
+  .demo-step-actions .btn { font-size:14px; padding:8px 11px; }
+}
+.mobile-menu { display:none; }
+@media (max-width: 920px) {
+  .mobile-menu { display:inline-flex; }
+  .header-actions { gap:7px; }
+  #nav-open { min-height:44px; }
+}

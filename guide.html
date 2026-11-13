@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0B6F68">
+<meta name="description" content="ปลาศาลาหุม ช่วยดูแลปลา วางแผนจับ และเชื่อมผู้ซื้อ ต้นแบบสาธิต">
+<title>คู่มือใช้งานและสาธิต | ปลาศาลาหุม</title>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+<link rel="stylesheet" href="assets/css/cloud.css">
+<script defer src="assets/js/config.js">
+</script>
+<script defer src="assets/js/utils.js">
+</script>
+<script defer src="assets/js/demo-data.js">
+</script>
+<script defer src="assets/js/calculations.js">
+</script>
+<script defer src="assets/js/risk-engine.js">
+</script>
+<script defer src="assets/js/store.js">
+</script>
+<script defer src="assets/js/domain.js">
+</script>
+<script defer src="assets/js/database-config.js"></script>
+<script defer src="assets/js/cloud.js"></script>
+<script defer src="assets/js/retry.js"></script>
+<script defer src="assets/js/guided-demo.js"></script>
+<script defer src="assets/js/app-shell.js">
+</script>
+<script defer src="assets/js/pages/guide.js">
+</script>
+</head>
+<body data-page="guide">
+<a class="skip" href="#main">ข้ามไปเนื้อหาหลัก</a>
+<aside class="app-sidebar" id="app-sidebar" aria-label="เมนูด้านข้าง">
+</aside>
+<header class="app-header" id="app-header">
+</header>
+<main id="main" class="page">
+<div class="breadcrumbs">
+<a href="index.html">หน้าหลัก</a> / คู่มือใช้งานและสาธิต</div>
+<div id="connection-notice">
+</div>
+<div id="role-gate"></div>
+<div class="page-heading"><div><h1>วิธีใช้ปลาศาลาหุม</h1><p>เลือกสถานการณ์สำหรับเดโม หรือดูวิธีทำงานกับบัญชีกลุ่ม</p></div></div>
+<section class="grid three" data-demo-only aria-label="สถานการณ์ทดลอง">
+  <article class="card"><h2>ขายปลาให้สองร้าน</h2><p>เดินตั้งแต่บันทึกอาการไปจนถึงรับปลา 50 กก.</p><div class="actions"><button class="btn" id="reset-demo">เริ่มเดโมใหม่</button></div></article>
+  <article class="card"><h2>พบปลาลอยหัว C03</h2><p>ติดตามอาการและงานดูแล แล้วลองจับจริง 47 กก.</p><div class="actions"><button class="btn secondary" data-scenario="urgent">ทดลองพบความเสี่ยง C03</button></div></article>
+  <article class="card"><h2>ค่าน้ำยังไม่ครบ C04</h2><p>ดูผลเมื่อไม่มีค่าออกซิเจน แล้วลองเพิ่มค่าที่วัดได้</p><div class="actions"><button class="btn secondary" data-scenario="missing">ทดลองข้อมูลไม่ครบ C04</button></div></article>
+</section>
+<section class="card" id="group-guide" hidden>
+  <h2>ทำงานร่วมกันในกลุ่ม</h2>
+  <p>ผู้เลี้ยงเริ่มจากกระชัง ผู้ประสานจัดสรรออเดอร์ ตรวจแผน และจัดรอบส่ง ผู้ซื้อเปิดออเดอร์ของตนเพื่อยืนยันและบันทึกน้ำหนักรับจริง</p>
+  <p>ใช้ปุ่ม “โหลดข้อมูลล่าสุด” เพื่อดูรายการที่สมาชิกบันทึกจากเครื่องอื่น</p>
+  <div class="actions"><a class="btn" href="dashboard.html?mode=group">กลับภาพรวมกลุ่ม</a></div>
+</section>
+<section class="card" id="server" style="margin-top:20px">
+  <h2>เปิดจากไฟล์ที่แตกไว้</h2>
+  <p>เปิดโฟลเดอร์ที่มี index.html ผ่านเว็บเซิร์ฟเวอร์ เช่น <code>python3 -m http.server 8000</code> แล้วเข้า <a href="http://localhost:8000/index.html">localhost:8000</a> ดูขั้นตอนบนมือถือใน README_TH.md</p>
+</section>
+<footer class="page-footer">
+<span>ปลาศาลาหุม · ต้นแบบสำหรับ SPARK HACK Season 2</span>
+<span data-clock>
+</span>
+</footer>
+</main>
+<nav class="bottom-nav" id="bottom-nav" aria-label="เมนูมือถือ">
+</nav>
+</body>
+</html>

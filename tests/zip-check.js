@@ -87,7 +87,7 @@ async function privacyEntry() {
 async function workflow() {
   const key = 'spark-fish-prototype-v2:' + new URL('../',location.href).pathname;
   await privacyEntry();
-  click('[href="dashboard.html?mode=demo"]');
+  click('.landing-actions a[href^="dashboard.html?mode=demo"]');
   await until(page('dashboard'), 'เปิดเดโม');
   await next('record-water');
   input('[value="กินอาหารลดลง"]', true);

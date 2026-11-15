@@ -50,10 +50,43 @@ async function reload() {
   await loaded;
 }
 
-async function workflow() {
+async function privacyEntry() {
+  const storagePath = new URL('../',location.href).pathname;
+  const noticeKey = 'spark-prototype:privacy-notice:' + storagePath;
+  const demoKey = 'spark-fish-prototype-v2:' + storagePath;
+  const modeKey = 'spark-prototype:mode';
+  assert(localStorage.getItem(demoKey) === null, 'ใช้หน้าต่างไม่ระบุตัวตนหรือโฟลเดอร์ทดสอบใหม่');
+  sessionStorage.removeItem(noticeKey);
+  sessionStorage.removeItem(modeKey);
+  await go('record-water.html?cage=C01&mode=demo');
+  assert(find('#privacy-accept') && !find('#main').checkVisibility(), 'แสดงประกาศก่อนฟอร์มจากลิงก์ตรง');
+  assert(sessionStorage.getItem(modeKey) === null && localStorage.getItem(demoKey) === null, 'ยังไม่ควรเปิดข้อมูลเดโม');
+  click('#privacy-decline');
+  assert(!find('#privacy-exit').hidden && sessionStorage.getItem(noticeKey) === null, 'ปฏิเสธแล้วต้องยังไม่เข้าเว็บ');
+  click('#privacy-read-again');
+  assert(find('#privacy-accept').checkVisibility(), 'ต้องกลับมาอ่านประกาศได้');
+
+  await go('dashboard.html?mode=group');
+  assert(find('#privacy-group').open && !find('#cloud-login-form') && sessionStorage.getItem(modeKey) === null, 'แสดงประกาศก่อนโหลดโหมดกลุ่ม');
+  await go('reset-password.html');
+  assert(find('#privacy-group').open && find('#request').hidden && find('#update').hidden, 'แสดงประกาศก่อนเปิดฟอร์มรหัสผ่าน');
+
   await go('index.html');
+  assert(!find('#main').checkVisibility(), 'ซ่อนปุ่มเริ่มเดโมและเข้ากลุ่มในหน้าแรก');
+  click('#privacy-accept');
+  assert(find('#main').checkVisibility() && sessionStorage.getItem(noticeKey), 'บันทึกรับทราบในแท็บแล้วเปิดหน้าแรก');
+  await reload();
+  assert(!find('#privacy-screen') && find('#main').checkVisibility(), 'ไม่ควรถามซ้ำเมื่อรีเฟรชในแท็บเดิม');
+  click('.privacy-review-link');
+  await until(() => find('#privacy-screen'), 'ย้อนกลับมาอ่านประกาศจากท้ายหน้า');
+  click('#privacy-accept');
+  assert(!find('#privacy-screen') && !app().location.search, 'กลับมาหน้าเดิมหลังอ่านประกาศซ้ำ');
+  report('ผ่าน แจ้งข้อมูลก่อนเข้าเดโม โหมดกลุ่ม ลิงก์ตรง และหน้ารหัสผ่าน รับทราบแล้วไม่ถามซ้ำในแท็บเดิม');
+}
+
+async function workflow() {
   const key = 'spark-fish-prototype-v2:' + new URL('../',location.href).pathname;
-  assert(localStorage.getItem(key) === null, 'ใช้หน้าต่างไม่ระบุตัวตนหรือโฟลเดอร์ทดสอบใหม่');
+  await privacyEntry();
   click('[href="dashboard.html?mode=demo"]');
   await until(page('dashboard'), 'เปิดเดโม');
   await next('record-water');

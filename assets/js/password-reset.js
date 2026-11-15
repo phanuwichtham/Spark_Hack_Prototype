@@ -25,5 +25,5 @@ requestForm.onsubmit=async e=>{e.preventDefault();const button=requestForm.query
 updateForm.onsubmit=async e=>{e.preventDefault();const password=document.querySelector('#password'),confirmation=document.querySelector('#confirm'),button=updateForm.querySelector('button');
  if(password.value!==confirmation.value){say('รหัสผ่านทั้งสองช่องไม่ตรงกัน');return;}button.disabled=true;
  try{await api('/auth/v1/user',{password:password.value},token,'PUT');token=null;password.value='';confirmation.value='';updateForm.hidden=true;say('บันทึกรหัสผ่านใหม่แล้ว กลับหน้าเข้าสู่ระบบและใช้รหัสผ่านใหม่ได้เลย');}catch(error){say(error.message);}finally{button.disabled=false;}};
-init();
+document.addEventListener('DOMContentLoaded', () => window.SparkPrivacy?.ready.then(init), { once:true });
 })();

@@ -100,6 +100,10 @@
       const mobile=(u.role==='buyer'?['dashboard','marketplace','orders','offers','guide']:u.role==='farmer'?['dashboard','cages','tasks','finance','guide']:['dashboard','cages','orders','harvest','guide']).map(p=>nav.find(n=>n[0]===p));
       U.html('#bottom-nav',mobile.map(([p,i,t])=>'<a href="'+p+'.html" class="'+(active(p)?'active':'')+'">'+icon(i)+'<span>'+e(t.replace('ของกลุ่ม','').replace(' / สาธิต',''))+'</span></a>').join(''));
       U.html('#role-gate','');
+      const footer = document.querySelector('.page-footer');
+      if (footer && !footer.querySelector('.privacy-review-link')) {
+        footer.insertAdjacentHTML('beforeend', '<a class="privacy-review-link" href="'+e(window.SparkPrivacy.reviewHref())+'">การใช้ข้อมูลส่วนบุคคล</a>');
+      }
       document.querySelectorAll('[data-clock]').forEach(el=>el.textContent=group?'เวลาไทย · '+S.util.date(s.demoNow):S.util.date(s.demoNow)+' • เวลาเดโม');
       S.guidedDemo.mount(s);
       document.querySelector('#notifications-open').onclick=()=>{
@@ -119,8 +123,13 @@
     }
   };
   document.addEventListener('DOMContentLoaded',async()=>{
-    // In cloud mode, do not render or accept mutations until Auth + database are ready.
-    if(S.cloud?.enabled){document.body.style.visibility='hidden';let ready;try{ready=await S.cloud.init();}finally{document.body.style.visibility='';}if(!ready)return;}
+    if (!window.SparkPrivacy) return;
+    await window.SparkPrivacy.ready;
+    if (S.cloud.enabled) document.body.style.visibility = 'hidden';
+    let ready;
+    try { ready = await S.cloud.init(); }
+    finally { document.body.style.visibility = ''; }
+    if (!ready) return;
     const shared=document.createElement('div');shared.innerHTML='<div id="toast" class="toast" hidden role="status" aria-live="polite"></div><dialog id="nav-dialog" aria-labelledby="nav-title"><div class="card-head"><h2 id="nav-title">เมนูทั้งหมด</h2><button class="btn small secondary" data-close>ปิด</button></div><nav id="all-nav"></nav></dialog><dialog id="role-dialog" aria-labelledby="role-title"><div class="card-head"><h2 id="role-title">เลือกบทบาททดลอง</h2><button class="btn small secondary" data-close>ปิด</button></div><p class="small muted">ข้อมูลต่อเนื่องในเบราว์เซอร์เดียวกัน ทุกชื่อเป็นสมมติ</p><div id="role-list"></div></dialog><dialog id="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title"></h2><p id="confirm-copy" style="margin-top:12px"></p><div class="actions"><button class="btn danger" id="confirm-yes">ยืนยัน</button><button class="btn secondary" data-close>กลับ</button></div></dialog><dialog id="notification-dialog" aria-labelledby="notification-title"><div class="card-head"><h2 id="notification-title">การแจ้งเตือน</h2><button class="btn small secondary" data-close>ปิด</button></div><p class="small muted">อ่านแจ้งเตือนไม่ได้แปลว่างานเสร็จ</p><div id="notification-list"></div></dialog>';
     document.body.append(shared);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
     document.addEventListener('click',event=>{if(event.target.closest('[data-role-open]'))U.openRoles();});

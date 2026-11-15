@@ -1,0 +1,148 @@
+/* Hide the landing page and forms while the notice is shown. */
+.privacy-pending body > :not(#privacy-screen):not(noscript) {
+  display: none !important;
+}
+
+main.privacy-screen,
+.privacy-no-script {
+  margin: 0 auto;
+  width: min(680px, calc(100% - 32px));
+}
+
+.privacy-screen {
+  padding: clamp(16px, 5vw, 42px) 0;
+  color: var(--text);
+}
+
+.privacy-no-script {
+  padding: 20px 0;
+}
+
+.privacy-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.privacy-card {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  padding: clamp(17px, 4vw, 32px);
+  box-shadow: 0 12px 38px #15664c0b;
+}
+
+.privacy-card [hidden] {
+  display: none !important;
+}
+
+.privacy-kicker {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.privacy-card h1 {
+  font-size: clamp(27px, 5vw, 38px);
+  line-height: 1.35;
+  margin: 5px 0 16px;
+}
+
+.privacy-card h2 {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.privacy-demo {
+  border-radius: 12px;
+  background: var(--soft);
+  padding: 12px 15px;
+}
+
+.privacy-card #privacy-group {
+  border-block: 1px solid var(--border);
+  margin-top: 14px;
+  padding: 0;
+}
+
+#privacy-group summary {
+  min-height: 46px;
+  padding: 10px 2px;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+#privacy-group summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+#privacy-group p:last-child {
+  padding-bottom: 11px;
+}
+
+.privacy-roles {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 11px;
+  margin: 10px 0;
+}
+
+.privacy-roles dt {
+  font-weight: 700;
+}
+
+.privacy-roles dd {
+  min-width: 0;
+  margin: 0;
+}
+
+.privacy-copy {
+  margin: 13px 0 17px;
+}
+
+.privacy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.privacy-card .btn {
+  min-height: 46px;
+}
+
+.privacy-foot {
+  margin-top: 13px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.privacy-foot a {
+  text-decoration: underline;
+}
+
+.privacy-status {
+  margin: 0 0 12px;
+  font-weight: 700;
+  color: #913a2d;
+}
+
+.privacy-exit .btn {
+  margin-top: 12px;
+}
+
+.privacy-review-link {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .privacy-screen {
+    font-size: 15px;
+  }
+
+  .privacy-actions .btn {
+    flex: 1 1 auto;
+  }
+}

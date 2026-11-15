@@ -4,11 +4,12 @@
   const cfg = S.databaseConfig;
   const requestedMode = S.util.query('mode');
   const modeKey = 'spark-prototype:mode';
+  const selectedMode = ['group', 'demo'].includes(requestedMode);
   let mode = requestedMode;
-  try {
-    if (['group', 'demo'].includes(mode)) sessionStorage.setItem(modeKey, mode);
-    else mode = sessionStorage.getItem(modeKey);
-  } catch (_) { /* Demo can report storage availability on its own. */ }
+  if (!selectedMode) {
+    try { mode = sessionStorage.getItem(modeKey); }
+    catch (_) { /* Demo can report storage availability on its own. */ }
+  }
   const enabled = mode === 'group' && document.body.dataset.page !== 'index';
   const namespace = 'spark-prototype:group:' + cfg.url + ':' + cfg.workspace;
   const authKey = namespace + ':auth';
@@ -81,7 +82,7 @@
       '<form id="cloud-login-form"><div class="field"><label for="cloud-email">อีเมล</label><input id="cloud-email" name="email" type="email" autocomplete="username" required></div>' +
       '<div class="field"><label for="cloud-password">รหัสผ่าน</label><input id="cloud-password" name="password" type="password" autocomplete="current-password" required></div>' +
       '<button class="btn">เข้าสู่ระบบ</button></form><div class="actions">' +
-      '<a id="recover-password" href="reset-password.html">ลืมรหัสผ่าน</a><a href="dashboard.html?mode=demo" class="btn secondary">ลองเดโม</a></div></main>';
+      '<a id="recover-password" href="reset-password.html">ลืมรหัสผ่าน</a><a href="dashboard.html?mode=demo" class="btn secondary">ลองเดโม</a></div><p><a class="privacy-review-link" href="'+S.util.esc(window.SparkPrivacy.reviewHref())+'">การใช้ข้อมูลส่วนบุคคล</a></p></main>';
     const box = document.querySelector('#cloud-login-error');
     const form = document.querySelector('#cloud-login-form');
     const show = text => { box.textContent = text; box.hidden = false; };
@@ -121,6 +122,10 @@
   S.cloud = {
     enabled,
     async init() {
+      if (selectedMode) {
+        try { sessionStorage.setItem(modeKey, mode); }
+        catch (_) { /* Demo can report storage availability on its own. */ }
+      }
       if (!enabled) return true;
       if (!configured()) { authScreen(); return false; }
       try {

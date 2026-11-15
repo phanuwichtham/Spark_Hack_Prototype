@@ -3,7 +3,7 @@
 1. สร้าง Supabase โปรเจกต์สำหรับทดสอบ แล้วรัน `migrations/001_spark_pilot.sql` ใน **SQL Editor** ด้วยบัญชีผู้ดูแล Migration เพิ่ม schema ใหม่และเก็บตารางเก่าไว้ ข้อมูลเดโมในเบราว์เซอร์ยังเปิดได้ด้วยค่าเริ่มต้นใน ZIP
 2. ใน **Authentication → Users** สร้างบัญชีอีเมลและรหัสผ่านแยกกันอย่างน้อยผู้ประสานหนึ่งบัญชี ผู้เลี้ยงหนึ่งบัญชี และผู้ซื้อสองบัญชี ใช้อีเมลจริงที่ทีมควบคุมและยืนยันบัญชีทดสอบใน Dashboard เลือกอีเมลที่ต่างกันทั้งห้าบัญชีหากจะตรวจการแยกผู้เลี้ยงด้วย
 3. แก้อีเมลและชื่อใน `add-members.example.sql` แล้วรันใน SQL Editor บัญชีที่ไม่มีใน Auth จะทำให้สคริปต์หยุดก่อนบันทึกสมาชิก หากใช้สี่บัญชีให้เอาบรรทัดผู้เลี้ยง B ออกจากรายการตัวอย่าง ชื่อกลุ่มตั้งต้นคือ `sala-hum-pilot`
-4. คัดลอก `assets/js/database-config.example.js` ไปแทน `assets/js/database-config.js` แล้วใส่ **Project URL** และ **Publishable key** จาก Supabase > Connect ให้ `workspace` ตรงกับรหัสกลุ่มใน SQL ค่านี้ใช้บนหน้าเว็บได้ เก็บรหัสผ่านและ Secret key ไว้นอกไฟล์เว็บและ GitHub
+4. คัดลอก `assets/js/database-config.example.js` ไปแทน `assets/js/database-config.js` แล้วใส่ **Project URL** และ **Publishable key** จาก Supabase > Connect ให้ `workspace` ตรงกับรหัสกลุ่มใน SQL ค่านี้ใช้บนหน้าเว็บได้ เก็บรหัสผ่านและ Secret key ไว้นอกไฟล์เว็บและ GitHub เมื่อแก้การเชื่อมต่อ ให้เปลี่ยนค่า `v` ในลิงก์ `database-config.js?v=...` ทุกหน้าและลิงก์เข้ากลุ่มใน `index.html` เพื่อให้เบราว์เซอร์โหลดค่าล่าสุด
 5. หากต้องการใช้ “ลืมรหัสผ่าน” เพิ่ม URL เต็มของ `reset-password.html` ใน **Authentication → URL Configuration → Redirect URLs** และตั้งค่าอีเมลของโปรเจกต์ให้ส่งถึงผู้ใช้ได้
 
 ## บัญชีและสิทธิ์สำหรับทดสอบ

@@ -13,7 +13,7 @@
     if(missingFields.includes('do'))reasons.push('ยังประเมินออกซิเจนไม่ได้ เพราะไม่มี DO');
     if(obs.symptoms.some(x=>['ลอยหัว','พบปลาตาย'].includes(x))){urgency='urgent';ruleIds.push('SYM-01');reasons.push('พบอาการ '+obs.symptoms.join(', ')+' ต้องเร่งตรวจและส่งต่อ ยังไม่วินิจฉัยสาเหตุ');recommendedTasks.unshift('เร่งตรวจอาการและติดต่อผู้รับผิดชอบ');}
     else if(obs.symptoms.some(x=>['กินอาหารลดลง','ว่ายผิดปกติ'].includes(x))){urgency='watch';ruleIds.push('SYM-02');reasons.push('มีอาการที่ต้องตรวจเพิ่มเติม ยังไม่ทราบสาเหตุ');recommendedTasks.push('ตรวจอาการและบันทึกติดตาม');}
-    const h=history.filter(o=>o.cageId===obs.cageId&&o.source===obs.source&&o.point===obs.point&&o.values.do!==null&&o.values.do!==undefined&&new Date(o.measuredAt)<=new Date(obs.measuredAt)).sort((a,b)=>new Date(a.measuredAt)-new Date(b.measuredAt));
+    const h=history.filter(o=>!o.retracted&&o.cageId===obs.cageId&&o.source===obs.source&&o.point===obs.point&&o.values.do!==null&&o.values.do!==undefined&&new Date(o.measuredAt)<=new Date(obs.measuredAt)).sort((a,b)=>new Date(a.measuredAt)-new Date(b.measuredAt));
     const unique=h.filter((o,i)=>!i||o.measuredAt!==h[i-1].measuredAt).slice(-3);
     if(unique.length===3&&unique[0].values.do>unique[1].values.do&&unique[1].values.do>unique[2].values.do){
       if(urgency!=='urgent')urgency='watch';ruleIds.push('TREND-DO-01');

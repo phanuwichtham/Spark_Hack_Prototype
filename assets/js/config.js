@@ -7,5 +7,5 @@ SPARK.config = {
   freshnessHours: { do: 4, temperature: 6, salinity: 12, ph: 12 },
   units: { do: 'mg/L', temperature: '°C', salinity: 'ppt', ph: 'pH' },
   coldCapacityKg: 70,
-  roleNames: {farmer:'ผู้เลี้ยงปลา', buyer:'ผู้ซื้อ', coordinator:'ผู้ประสานกลุ่ม'}
+  roleNames: {farmer:'ผู้เลี้ยงปลา', buyer:'ผู้ซื้อ', coordinator:'ผู้ประสานงานโครงการ'}
 };

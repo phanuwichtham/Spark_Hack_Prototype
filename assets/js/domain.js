@@ -9,7 +9,7 @@
     if(a.actionId&&s.processedActions.includes(a.actionId))return s;
     let result=null;
     const get=(type,key)=>{const x=S.util.find(s,type,key);require(x,'ไม่พบข้อมูล '+key);return x;};
-    const coordinator=()=>require(actor.role==='coordinator','ต้องเลือกบทบาทผู้ประสานกลุ่ม');
+    const coordinator=()=>require(actor.role==='coordinator','ต้องเลือกบทบาทผู้ประสานงานโครงการ');
     const owner=c=>require(actor.role==='coordinator'||actor.id===c.ownerId,'เลือกเจ้าของกระชังหรือผู้ประสานก่อน');
     const buyer=o=>require(actor.role==='buyer'&&actor.id===o.buyerId,'เลือกบัญชีร้านที่เกี่ยวข้องก่อน');
     const log=(type,entityId,message)=>s.audit.push({id:id('AUD'),type,entityId,message,at:now,actorId:actor.id});

@@ -1,7 +1,7 @@
 (function(S){
   const w=S.util.weight;
   S.calc={
-    latest(s,cageId){return s.observations.filter(o=>o.cageId===cageId).reverse().sort((a,b)=>new Date(b.measuredAt)-new Date(a.measuredAt))[0]||null;},
+    latest(s,cageId){return s.observations.filter(o=>!o.retracted&&o.cageId===cageId).reverse().sort((a,b)=>new Date(b.measuredAt)-new Date(a.measuredAt))[0]||null;},
     active(s,r){return r.status==='active'&&(!r.expiresAt||new Date(r.expiresAt)>new Date(s.demoNow));},
     reserved(s,cageId){return w(s.reservations.filter(r=>r.cageId===cageId&&!r.lotId&&this.active(s,r)).reduce((n,r)=>n+r.kg,0));},
     available(s,cageId){const c=S.util.find(s,'cages',cageId);return c?w(Math.max(0,c.liveKg-this.reserved(s,cageId))):0;},

@@ -24,7 +24,7 @@ SPARK.page=function(){
     const symptoms=fd.getAll('symptoms');
     if(!Object.values(values).some(v=>v!=='')&&!symptoms.length&&!d.note.trim())
       throw Error('กรอกค่าที่วัดได้ เลือกอาการ หรือจดสิ่งที่สังเกตอย่างน้อยหนึ่งอย่าง');
-    return U.submit({type:'RECORD_WATER',cageId:c.id,values,symptoms,source:d.source,point:d.point,instrument:d.instrument,note:d.note,
+    return U.submit({type:'RECORD_WATER',cageId:c.id,values,symptoms,source:d.source,sourceName:d.sourceName,channel:d.channel,point:d.point,instrument:d.instrument,note:d.note,
       measuredAt:S.util.fromThaiTime(d.measuredAt),symptomAt:symptoms.length?S.util.fromThaiTime(d.symptomAt):null},'risk.html?cage='+c.id);
   });
 };

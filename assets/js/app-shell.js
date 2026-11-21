@@ -88,10 +88,13 @@
       }
       const u=S.util.user(s),page=document.body.dataset.page,group=S.cloud.enabled;
       document.body.classList.toggle('group-mode', group);
-      const nav=[['dashboard','grid','ภาพรวม'],['cages','fish','กระชังของกลุ่ม'],['tasks','task','งานดูแล'],['harvest','water','แผนจับปลา'],['marketplace','shop','สั่งปลา'],['orders','order','ออเดอร์'],['offers','offer','ข้อเสนอ'],['allocation','grid','จัดสรรปลา'],['delivery','truck','รอบส่ง'],['lots','box','ล็อตและสต็อก'],['finance','money','เงินรับสุทธิ'],['guide','help','วิธีใช้ / สาธิต']];
-      const permitted=nav.filter(n=>u.role==='coordinator'||(u.role==='buyer'?['dashboard','marketplace','orders','offers','delivery','guide'].includes(n[0]):!['allocation','offers'].includes(n[0])));
+      const nav=[['dashboard','grid','ภาพรวม'],['cages','fish',u.role==='farmer'?'กระชังของฉัน':'กระชังในโครงการ'],['tasks','task','งานดูแล'],['harvest','water','แผนจับปลา'],['marketplace','shop','สั่งปลา'],['orders','order','ออเดอร์'],['offers','offer','ข้อเสนอ'],['allocation','grid','จัดสรรปลา'],['delivery','truck','รอบส่ง'],['lots','box','ล็อตและสต็อก'],['finance','money','เงินรับสุทธิ'],['mortality','fish','บันทึกการตาย'],['analytics','grid','ประวัติและ ML'],['partners','shop','GI และ Thai SELECT'],['trips','truck','เที่ยวเรือ'],['guide','help','วิธีใช้ / สาธิต']];
+      const permitted=nav.filter(n=>u.role==='coordinator'||(u.role==='buyer'?['dashboard','marketplace','orders','offers','delivery','guide'].includes(n[0]):!['allocation','offers','partners','marketplace'].includes(n[0])));
       const active=p=>page===p||({'cage-detail':'cages','record-water':'cages',risk:'cages',order:'marketplace','order-detail':'orders','lot-detail':'lots'}[page]===p);
-      U.html('#app-sidebar','<a class="brand" href="index.html">'+icon('fish')+'<span>'+e(S.config.name)+'<small>บ้านศาลาหุม</small></span></a><div class="nav-label">พื้นที่ทำงานของคุณ</div><nav aria-label="เมนูหลัก">'+permitted.map(([p,i,t])=>'<a class="nav-item '+(active(p)?'active':'')+'" href="'+p+'.html" '+(active(p)?'aria-current="page"':'')+'>'+icon(i)+e(t)+'</a>').join('')+'</nav><div class="sidebar-foot"><div class="line"></div>บ้านศาลาหุม · สงขลา<br><br><span class="tag">'+(group?'โหมดกลุ่ม':'โหมดเดโม')+'</span></div>');
+      const navLink=([p,i,t])=>'<a class="nav-item '+(active(p)?'active':'')+'" href="'+p+'.html" '+(active(p)?'aria-current="page"':'')+'>'+icon(i)+e(t)+'</a>';
+      const primary=['dashboard','cages','mortality','orders','finance'];
+      const navMarkup=u.role==='farmer'?permitted.filter(n=>primary.includes(n[0])).map(navLink).join('')+'<details class="nav-more"><summary>งานและข้อมูลเพิ่มเติม</summary>'+permitted.filter(n=>!primary.includes(n[0])).map(navLink).join('')+'</details>':permitted.map(navLink).join('');
+      U.html('#app-sidebar','<a class="brand" href="index.html">'+icon('fish')+'<span>'+e(S.config.name)+'<small>บ้านศาลาหุม</small></span></a><div class="nav-label">พื้นที่ทำงานของคุณ</div><nav aria-label="เมนูหลัก">'+navMarkup+'</nav><div class="sidebar-foot"><div class="line"></div>บ้านศาลาหุม · สงขลา<br><br><span class="tag">'+(group?'โหมดกลุ่ม':'โหมดเดโม')+'</span></div>');
       const unread=s.notifications.filter(n=>n.userId===u.id&&!n.read).length;
       const account = '<span class="avatar">' + e(u.name.slice(0,1)) + '</span><span class="account-name">' +
         e(u.name) + '<small>' + e(S.config.roleNames[u.role]) + '</small></span>';
@@ -105,7 +108,7 @@
         footer.insertAdjacentHTML('beforeend', '<a class="privacy-review-link" href="'+e(window.SparkPrivacy.reviewHref())+'">การใช้ข้อมูลส่วนบุคคล</a>');
       }
       document.querySelectorAll('[data-clock]').forEach(el=>el.textContent=group?'เวลาไทย · '+S.util.date(s.demoNow):S.util.date(s.demoNow)+' • เวลาเดโม');
-      S.guidedDemo.mount(s);
+      if(!['mortality','analytics','partners','trips'].includes(page))S.guidedDemo.mount(s);
       document.querySelector('#notifications-open').onclick=()=>{
         U.html('#notification-list',s.notifications.filter(n=>n.userId===u.id).reverse().map(n=>'<div class="row"><div>'+e(n.text)+'<br>'+link(n.url,'เปิดรายการ','btn small secondary')+'</div>'+(!n.read?'<button class="btn small secondary" data-read="'+e(n.id)+'">อ่านแล้ว</button>':'<small>อ่านแล้ว</small>')+'</div>').join('')||'<p class="muted">ยังไม่มีแจ้งเตือนใหม่</p>');
         document.querySelectorAll('[data-read]').forEach(b=>b.onclick=async()=>{await U.act({type:'READ_NOTIFICATION',id:b.dataset.read});document.querySelector('#notifications-open').click();});

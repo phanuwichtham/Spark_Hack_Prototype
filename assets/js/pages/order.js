@@ -11,10 +11,10 @@ SPARK.page=function(){
   function save(){S.retry.capture(f);refresh();}
   function show(n){step=n;document.querySelectorAll('[data-step]').forEach(x=>x.hidden=Number(x.dataset.step)!==n);document.querySelectorAll('[data-step-label]').forEach(x=>x.classList.toggle('active',Number(x.dataset.stepLabel)===n));document.querySelector('#order-prev').hidden=n===1;document.querySelector('#order-next').hidden=n===3;document.querySelector('#order-submit').hidden=n!==3;}
   f.oninput=save;f.onchange=save;refresh();show(1);
-  document.querySelector('#order-next').onclick=()=>{if(step===2){const kg=Number(f.elements.kg.value);if(!(kg>0&&kg<=S.calc.offerAvailable(U.state(),p.id))){U.toast('จำนวนต้องมากกว่า 0 และไม่เกินปริมาณพร้อมเสนอขาย',true);return;}if(!f.elements.place.value.trim()){U.toast('ระบุจุดรับหรือส่งปลาให้ร้านด้วย',true);f.elements.place.focus();return;}if(!f.elements.receiveDate.value||!f.elements.window.value){U.toast('เลือกวันและช่วงเวลารับ',true);return;}}show(Math.min(3,step+1));};
+  document.querySelector('#order-next').onclick=()=>{if(step===2){const kg=Number(f.elements.kg.value);if(!(kg>0&&kg<=S.calc.offerAvailable(U.state(),p.id))){U.toast('จำนวนต้องมากกว่า 0 และไม่เกินปริมาณพร้อมเสนอขาย',true);return;}if(!f.elements.receiveDate.value||!f.elements.window.value){U.toast('เลือกวันและช่วงเวลารับ',true);return;}}show(Math.min(3,step+1));};
   document.querySelector('#order-prev').onclick=()=>show(Math.max(1,step-1));
   document.querySelector('#minus-kg').onclick=()=>{f.elements.kg.value=Math.max(0,Number(f.elements.kg.value)-1);save();};
   document.querySelector('#plus-kg').onclick=()=>{f.elements.kg.value=Number(f.elements.kg.value)+1;save();};
-  U.form(f,fd=>{if(step!==3){document.querySelector('#order-next').click();return;}return U.submit({type:'CREATE_ORDER',productId:p.id,...Object.fromEntries(fd),optin:fd.has('optin')},s=>'order-detail.html?id='+s.lastResultId);});
+  U.form(f,fd=>{if(step!==3){document.querySelector('#order-next').click();return;}if(!f.elements.place.value.trim()){U.toast('ระบุจุดรับหรือส่งปลาให้ร้านด้วย',true);f.elements.place.focus();return;}return U.submit({type:'CREATE_ORDER',productId:p.id,...Object.fromEntries(fd),optin:fd.has('optin')},s=>'order-detail.html?id='+s.lastResultId);});
   refresh();
 };

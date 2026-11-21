@@ -1,13 +1,16 @@
 SPARK.page=function(){
   const S=SPARK,U=S.ui,s=U.state(),e=U.e,u=U.user(),l=s.lots.find(l=>l.id===S.util.query('id'));
   if(!l){U.missing('ล็อต');return;}
-  const orders=U.allowedOrders(s).filter(o=>s.reservations.some(r=>r.orderId===o.id&&r.lotId===l.id));
+  const orders=U.allowedOrders(s).filter(o=>s.reservations.some(r=>r.orderId===o.id&&r.lotId===l.id&&['active','fulfilled'].includes(r.status)));
   if(u.role!=='coordinator'&&l.ownerId!==u.id&&!orders.length){U.missing('ล็อตที่บัญชีนี้เข้าถึงได้');return;}
-  if(S.cloud.enabled&&u.role==='buyer'){
+  const trace=S.cloud.enabled?(s.sharedLotTraces||[]).find(t=>t.lotId===l.id):S.trace.publicTrace(s,l.id);
+  U.html('#lot-trace','<h2>วิธีเลี้ยงและหลักฐานของล็อตนี้</h2>'+S.traceView.render(trace,s)+(u.role!=='buyer'?'<div class="actions">'+U.link('traceability.html?lot='+l.id,'จัดการประวัติและข้อมูลที่แชร์')+'</div>':''));
+  if(u.role==='buyer'){
     const p=s.products.find(p=>p.id===l.productId);
-    U.html('#lot-overview','<article class="card"><h2>'+e(p.name)+'</h2><p>'+e(l.id)+'</p>'+U.tag(l.quality)+'</article>');
-    U.html('#lot-source','<dl class="key-value"><dt>จัดสรรให้บัญชีนี้จากล็อต</dt><dd>'+S.util.kg(l.kg)+'</dd><dt>วันที่สร้างล็อต</dt><dd>'+e(S.util.date(l.at))+'</dd></dl>');
+    U.html('#lot-overview','<article class="card"><h2>'+e(p?.name||'ปลาจากล็อตที่ได้รับจัดสรร')+'</h2><p>'+e(l.id)+'</p>'+U.tag(l.quality)+'</article>');
+    U.html('#lot-source','<dl class="key-value"><dt>จัดสรรให้บัญชีนี้จากล็อต</dt><dd>'+S.util.kg(s.reservations.filter(r=>r.lotId===l.id&&orders.some(o=>o.id===r.orderId)&&['active','fulfilled'].includes(r.status)).reduce((n,r)=>n+r.kg,0))+'</dd><dt>วันที่สร้างล็อต</dt><dd>'+e(S.util.date(l.at))+'</dd></dl>');
     U.html('#lot-orders',orders.map(o=>U.link('order-detail.html?id='+o.id,'เปิดออเดอร์ '+o.id)).join(''));
+    document.querySelector('#lot-audit-card').hidden=true;
     return;
   }
   const c=s.cages.find(c=>c.id===l.cageId),p=s.plans.find(p=>p.id===l.planId),h=s.harvests.find(h=>h.id===l.harvestId),owner=s.users.find(u=>u.id===l.ownerId);

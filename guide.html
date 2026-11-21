@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="assets/css/layout.css">
 <link rel="stylesheet" href="assets/css/pages.css">
 <link rel="stylesheet" href="assets/css/pilot.css?v=20261121">
+<link rel="stylesheet" href="assets/css/trace.css?v=20261121-1">
 <link rel="stylesheet" href="assets/css/cloud.css">
 <link rel="stylesheet" href="assets/css/privacy.css?v=20261115">
 <script defer src="assets/js/privacy.js?v=20261115"></script>
@@ -31,15 +32,17 @@
 <script defer src="assets/js/domain.js">
 </script>
 <script defer src="assets/js/pilot-domain.js?v=20261121"></script>
+<script defer src="assets/js/trace-domain.js?v=20261121-1"></script>
+<script defer src="assets/js/trace-view.js?v=20261121-1"></script>
 <script defer src="assets/js/database-config.js?v=902575620803"></script>
 <script defer src="assets/js/cloud.js?v=20261115"></script>
 <script defer src="assets/js/retry.js"></script>
 <script defer src="assets/js/guided-demo.js"></script>
-<script defer src="assets/js/app-shell.js?v=20261115">
+<script defer src="assets/js/app-shell.js?v=20261121-trace">
 </script>
 <script defer src="assets/js/pages/guide.js">
 </script>
-<script defer src="assets/js/pilot-enhancements.js?v=20261121"></script>
+<script defer src="assets/js/pilot-enhancements.js?v=20261121-trace"></script>
 </head>
 <body data-page="guide">
 <noscript><p class="privacy-no-script">เปิด JavaScript เพื่ออ่านประกาศและเข้าใช้งานปลาศาลาหุม</p></noscript>
@@ -69,6 +72,11 @@
 <section class="card" id="server" style="margin-top:20px">
   <h2>เปิดจากไฟล์ที่แตกไว้</h2>
   <p>เปิดโฟลเดอร์ที่มี index.html ผ่านเว็บเซิร์ฟเวอร์ เช่น <code>python3 -m http.server 8000</code> แล้วเข้า <a href="http://localhost:8000/index.html">localhost:8000</a> ดูขั้นตอนบนมือถือใน README_TH.md</p>
+</section>
+<section class="card" id="trace-setup" style="margin-top:20px">
+<h2>ประวัติเลี้ยงและหลักฐานตามล็อต</h2><p>ผู้เลี้ยงหรือผู้ประสานบันทึกวิธีเลี้ยง อาหาร/ยา และลิงก์เอกสารต้นฉบับ จากนั้นเลือกล็อตและรายการที่เจ้าของอนุญาตให้ร้านเปิดอ่าน ร้านเข้าจากออเดอร์ของตนแล้วเปิดล็อตปลา</p>
+<p>หากโหมดกลุ่มยังไม่ได้เปิดฟีเจอร์นี้ ผู้ดูแลรัน <code>002_ml_gi_pilot.sql</code> (หากยังไม่ติดตั้ง) และ <code>003_traceability.sql</code> ตามลำดับใน Supabase SQL Editor แล้วกดโหลดข้อมูลล่าสุด</p>
+<div class="actions"><a class="btn secondary" href="traceability.html">เปิดประวัติเลี้ยงและหลักฐาน</a><a class="btn secondary" href="database/migrations/003_traceability.sql" download>ดาวน์โหลด SQL 003</a><a class="btn secondary" href="TRACEABILITY_TH.md">คู่มือฟีเจอร์นี้</a></div>
 </section>
 <footer class="page-footer">
 <span>ปลาศาลาหุม · ต้นแบบสำหรับ SPARK HACK Season 2</span>

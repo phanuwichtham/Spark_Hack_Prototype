@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path'),root=path.resolve(__dirname,'..'),memory=new Map();
 const context={console,Intl,Date,Math,JSON,URL,URLSearchParams,crypto:require('crypto').webcrypto,localStorage:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v)}};
 context.window=context;vm.createContext(context);
-for(const name of['config','utils','demo-data','calculations','risk-engine','ml-engine','store','domain','pilot-domain'])vm.runInContext(fs.readFileSync(path.join(root,'assets/js',name+'.js'),'utf8'),context,{filename:name+'.js'});
+for(const name of['config','utils','demo-data','calculations','risk-engine','ml-engine','store','domain','pilot-domain','trace-domain'])vm.runInContext(fs.readFileSync(path.join(root,'assets/js',name+'.js'),'utf8'),context,{filename:name+'.js'});
 vm.runInContext(fs.readFileSync(path.join(__dirname,'domain-tests.js'),'utf8'),context);
 const report=context.SPARK.runDomainTests();
 function add(name,fn){try{fn();report.results.push({name,pass:true});report.passed++;}catch(e){report.results.push({name,pass:false,error:e.message});report.failed++;}report.total++;}

@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const ctx={console,Date,Intl,Math,JSON,URL,URLSearchParams,crypto:require('node:crypto').webcrypto,location:{pathname:'/',search:''},localStorage:{getItem:()=>null,setItem:()=>{}},addEventListener:()=>{}};
 ctx.window=ctx;vm.createContext(ctx);
-for(const file of ['config','utils','demo-data','calculations','risk-engine','ml-engine','store','domain','pilot-domain'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../assets/js',file+'.js'),'utf8'),ctx);
+for(const file of ['config','utils','demo-data','calculations','risk-engine','ml-engine','store','domain','pilot-domain','trace-domain'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../assets/js',file+'.js'),'utf8'),ctx);
 const S=ctx.SPARK,clock='2026-11-21T06:00:00.000Z',seed=()=>{const s=S.seed('normal',clock);s.currentUserId='CO01';return s;};
 let passed=0;const test=(name,fn)=>{fn();passed++;console.log('PASS '+name);};
 const report={type:'RECORD_MORTALITY',cageId:'C01',periodStart:'2026-11-20T06:00:00.000Z',periodEnd:clock,population:250,deaths:0,inspection:'checked',causeStatus:'unknown',sourceName:'เจ้าของให้ข้อมูล',channel:'phone'};

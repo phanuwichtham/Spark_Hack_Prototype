@@ -16,7 +16,7 @@
       const target=document.querySelector('#dashboard-greeting');
       if(u.role==='farmer'){const saleLink=main.querySelector('aside a[href="marketplace.html"]');if(saleLink){saleLink.href='harvest.html';saleLink.textContent='ดูแผนจับของฉัน';}}
       if(u.role==='farmer')target?.insertAdjacentHTML('beforeend','<div class="pilot-primary-actions" data-pilot-extra>'+U.link('cages.html','แจ้งอาการปลา','btn')+U.link('orders.html','ยืนยันรายการขาย','btn secondary')+U.link('finance.html','ดูเงินของฉัน','btn secondary')+'</div>');
-      if(u.role!=='buyer')section('<h2>ข้อมูลและการพัฒนารายได้</h2><div class="actions">'+U.link('mortality.html','บันทึกการตาย')+U.link('analytics.html','ประวัติและ Machine Learning')+U.link('trips.html','ต้นทุนเที่ยวเรือ')+(u.role==='coordinator'?U.link('partners.html','GI และตลาด Thai SELECT'):'')+'</div><p class="small">'+(S.cloud.enabled?'ใช้ข้อมูลที่บัญชีนี้มีสิทธิ์เข้าถึง':'โหมดเดโมใช้ข้อมูลสมมติ การฝึก ML สังเคราะห์เปิดจากหน้าประวัติและ Machine Learning')+'</p>');
+      if(u.role!=='buyer')section('<h2>ข้อมูลและการพัฒนารายได้</h2><div class="actions">'+U.link('traceability.html','ประวัติเลี้ยงและหลักฐาน')+U.link('mortality.html','บันทึกการตาย')+U.link('analytics.html','ประวัติและ Machine Learning')+U.link('trips.html','ต้นทุนเที่ยวเรือ')+(u.role==='coordinator'?U.link('partners.html','GI และตลาด Thai SELECT'):'')+'</div><p class="small">'+(S.cloud.enabled?'ใช้ข้อมูลที่บัญชีนี้มีสิทธิ์เข้าถึง':'โหมดเดโมใช้ข้อมูลสมมติ การฝึก ML สังเคราะห์เปิดจากหน้าประวัติและ Machine Learning')+'</p>');
     }
     if(page==='record-water'&&u.role!=='buyer'){
       const f=document.querySelector('main form');
@@ -52,7 +52,7 @@
       }
       const confirmations=o.assistedConfirmations||[];if(confirmations.length)section('<h2>หลักฐานการยืนยันผ่านผู้ช่วย</h2>'+confirmations.map(c=>'<p>'+e(s.users.find(x=>x.id===c.ownerId)?.name||c.ownerId)+' · '+e(c.channel)+' · '+e(S.util.date(c.at))+'<br>'+e(c.evidence)+'<br>บันทึกโดย '+e(s.users.find(x=>x.id===c.recorderId)?.name||c.recorderId)+'</p>').join(''));
     }
-    if(page==='lot-detail'){
+    if(page==='lot-detail'&&u.role!=='buyer'){
       const id=S.util.query('id'),records=s.giRecords.filter(g=>g.lotId===id);
       if(records.length)section('<h2>หลักฐาน GI ที่เชื่อมกับล็อต</h2>'+records.map(g=>'<p>ทะเบียนผู้ผลิต '+e(g.producerRef)+'<br>น้ำหนักขั้นต่ำที่ตรวจ '+e(g.minFishKg)+' กก./ตัว<br>'+e(g.evidence)+'<br>บันทึกเอกสารโดย '+e(g.reviewer)+'</p>').join('')+'<p class="small">แสดงเอกสารประกอบ ไม่ใช่ตราที่ออกโดยเว็บไซต์</p>');
     }

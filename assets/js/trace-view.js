@@ -1,0 +1,20 @@
+(function(S){
+  'use strict';
+  const e=S.util.esc,kind={method:'วิธีเลี้ยง',feed:'อาหาร',treatment:'ยาและการดูแล'};
+  const date=d=>d?e(d.split('-').reverse().join('/')):'ไม่ระบุ';
+  const link=url=>{const safe=S.trace.safeUrl(url);return safe?'<a class="btn small secondary" href="'+e(safe)+'" target="_blank" rel="noopener noreferrer">เปิดหลักฐานต้นฉบับ</a>':'';};
+  function history(r){
+    const treatment=r.kind==='treatment'?'<p><strong>สถานะยา:</strong> '+e({used:'มีการใช้ตามบันทึก','reported-none':'ผู้ให้ข้อมูลระบุว่าไม่ได้ใช้ในช่วงนี้',unknown:'ยังไม่มีข้อมูลยืนยัน'}[r.treatmentStatus]||'ยังไม่มีข้อมูลยืนยัน')+'</p>'+(r.treatmentStatus==='used'?'<p>หยุดยาตามเอกสารถึง: '+date(r.withdrawalUntil)+'<br>แหล่งอ้างอิง: '+e(r.withdrawalNote||'ยังไม่ระบุ')+'</p><p class="small">วันหยุดยาเป็นข้อมูลที่บันทึกไว้ ต้องตรวจเอกสารและผู้รับผิดชอบก่อนรับสินค้า</p>':''):'';
+    return '<article class="trace-record"><div class="card-head"><h3>'+e(kind[r.kind]||'ประวัติ')+'</h3><span class="tag">'+date(r.fromDate)+' – '+date(r.toDate)+'</span></div><p class="trace-copy">'+e(r.description)+'</p>'+(r.productName?'<p><strong>ชื่ออาหาร / ยา:</strong> '+e(r.productName)+'<br>รุ่นผลิต: '+e(r.batchRef||'ยังไม่ระบุ')+(r.quantityKg!=null?'<br>ปริมาณอาหาร: '+e(r.quantityKg)+' กก.':'')+'</p>':'')+treatment+'<p class="small muted">ให้ข้อมูลโดย '+e(r.sourceName||'ไม่ระบุ')+' · บันทึกโดย '+e(r.recorderName||'สมาชิกกลุ่ม')+'<br>'+e(S.util.date(r.recordedAt))+'</p>'+link(r.documentUrl)+'</article>';
+  }
+  function standard(r,now){
+    const expired=!!r.expiresOn&&r.expiresOn<now,review={recorded:'บันทึกเอกสารแล้ว · ยังไม่ตรวจ',checked:'ทีมตรวจเอกสารแล้ว',rejected:'ทีมตรวจพบข้อขัดแย้ง'}[r.reviewStatus]||'รอตรวจเอกสาร';
+    return '<article class="trace-record"><div class="card-head"><h3>'+e(r.standardName)+'</h3><span class="tag '+(expired||r.reviewStatus==='rejected'?'expired':'')+'">'+e(expired?'เอกสารหมดอายุ':review)+'</span></div><dl class="key-value"><dt>เลขที่เอกสาร</dt><dd>'+e(r.certificateNo)+'</dd><dt>หน่วยงานผู้ออกตามเอกสาร</dt><dd>'+e(r.issuer)+'</dd><dt>ขอบเขต</dt><dd class="trace-copy">'+e(r.scope)+'</dd><dt>ออกเอกสาร / หมดอายุ</dt><dd>'+date(r.issuedOn)+' / '+date(r.expiresOn)+'</dd></dl>'+(expired?'<p class="small">'+e(review)+'</p>':'')+(r.reviewedAt?'<p class="small">ผลตรวจโดย '+e(r.reviewerName)+' · '+e(S.util.date(r.reviewedAt))+'<br>'+e(r.reviewNote)+'</p>':'')+(!r.expiresOn?'<p class="small">ยังไม่ระบุวันหมดอายุ กรุณาตรวจสถานะกับหน่วยงานผู้ออก</p>':'')+link(r.reviewStatus==='rejected'?'':r.documentUrl)+'<p class="small muted">บันทึกโดย '+e(r.recorderName)+' · '+e(S.util.date(r.recordedAt))+'</p></article>';
+  }
+  function render(trace,s){
+    if(!trace)return '<div class="empty"><h3>ยังไม่ได้แชร์ประวัติสำหรับล็อตนี้</h3><p>ขอให้ผู้เลี้ยงหรือผู้ประสานแนบประวัติวิธีเลี้ยง อาหาร/ยา และหลักฐานของล็อตนี้ก่อนตรวจรับ</p></div>';
+    const histories=trace.history||[],standards=trace.standards||[],today=S.trace.today(s);
+    return '<div class="trace-origin"><span class="eyebrow">แหล่งผลิตที่เจ้าของอนุญาตให้เปิดเผย</span><h3>'+e(trace.producerLabel)+'</h3><p>'+e(trace.area)+'</p><p class="trace-copy">'+e(trace.methodSummary)+'</p><p class="small muted">แชร์เมื่อ '+e(S.util.date(trace.sharedAt))+' · บันทึกโดย '+e(trace.recorderName)+'</p></div><p class="notice">ประวัตินี้เป็นรายการที่เลือกเปิดเผย อาจไม่ครอบคลุมทั้งรอบเลี้ยง การไม่มีบันทึกยาไม่ได้แปลว่าไม่เคยใช้ยา</p>'+(trace.withdrawnCount?'<p class="notice warning">มี '+e(trace.withdrawnCount)+' รายการถูกถอนเพื่อแก้ไข กรุณาขอข้อมูลล่าสุดจากผู้ประสาน</p>':'')+'<h3>ประวัติวิธีเลี้ยง อาหาร และยา</h3><div class="trace-list">'+histories.map(history).join('')+'</div>'+(!histories.some(r=>r.kind==='treatment')?'<p class="notice warning">ยังไม่ได้แนบประวัติการใช้ยาในล็อตนี้</p>':'')+'<h3>เอกสารมาตรฐานที่แนบกับล็อต</h3><p class="small">สถานะ “ทีมตรวจเอกสารแล้ว” หมายถึงการตรวจเอกสารของโครงการ สถานะรับรองต้องตรวจจากหน่วยงานผู้ออกและขอบเขตในต้นฉบับ</p><div class="trace-list">'+(standards.map(r=>standard(r,today)).join('')||'<p class="notice warning">ยังไม่มีหลักฐานมาตรฐานแนบกับล็อตนี้</p>')+'</div>';
+  }
+  S.traceView={render,history,standard};
+})(SPARK);

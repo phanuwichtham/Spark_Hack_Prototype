@@ -1,5 +1,6 @@
 # ปลาศาลาหุม
 
+รุ่น Traceability: [คู่มือประวัติวิธีเลี้ยง อาหาร/ยา และหลักฐานตามล็อต](TRACEABILITY_TH.md) · โหมดกลุ่มต้องติดตั้ง `003_traceability.sql` หลัง `002`
 รุ่นเพิ่ม Machine Learning และงาน GI/Thai SELECT: อ่าน [คู่มือรุ่นใหม่](PILOT_UPDATE_TH.md) ก่อนทดลอง ส่วนฟีเจอร์ใหม่ในโหมดข้อมูลร่วมต้องติดตั้ง migration `002_ml_gi_pilot.sql` หลัง `001`
 
 

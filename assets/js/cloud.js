@@ -34,7 +34,7 @@
       const data = response.status === 204 ? null : await response.json().catch(() => null);
       if (response.ok && (response.status === 204 || data !== null)) return data;
       const error = new Error(
-        data?.code === '40001' ? 'ข้อมูลกลุ่มเปลี่ยนแล้ว กด “โหลดข้อมูลล่าสุด” แล้วลองบันทึกอีกครั้ง ร่างยังอยู่' :
+        data?.code === '40001' ? 'ข้อมูลกลุ่มเปลี่ยนแล้ว กด “อัปเดตข้อมูล” แล้วลองบันทึกอีกครั้ง ร่างยังอยู่' :
         data?.code === '42501' || response.status === 403 ? 'บัญชีนี้ไม่มีสิทธิ์ในกลุ่มหรือรายการนี้' :
         path.includes('grant_type=password') ? 'เข้าสู่ระบบไม่สำเร็จ ตรวจอีเมลและรหัสผ่านกับผู้ดูแลกลุ่ม' :
         response.status === 401 ? 'การเข้าสู่ระบบหมดอายุ กรุณาเข้าสู่ระบบใหม่' :
@@ -44,7 +44,7 @@
       throw error;
     } catch (error) {
       if (error.name === 'AbortError' || error instanceof TypeError)
-        throw Error('ติดต่อฐานข้อมูลไม่ได้ ร่างยังอยู่ กด “โหลดข้อมูลล่าสุด” ก่อนลองบันทึกอีกครั้ง');
+        throw Error('ยังเชื่อมต่อข้อมูลกลุ่มไม่ได้ สิ่งที่กรอกยังอยู่ กด “อัปเดตข้อมูล” ก่อนลองบันทึกอีกครั้ง');
       throw error;
     } finally { clearTimeout(timer); }
   }
@@ -76,36 +76,13 @@
 
   function authScreen(detail = '') {
     document.body.classList.add('group-login-page');
-    document.body.innerHTML = '<main class="cloud-login card"><a href="index.html" class="back-link">← หน้าหลักปลาศาลาหุม</a>' +
-      '<h1>เข้ากลุ่มของฉัน</h1><p>ใช้บัญชีที่ผู้ดูแลกลุ่มสร้างให้</p>' +
-      '<p id="cloud-login-error" class="notice warning" role="alert" hidden></p>' +
-      '<form id="cloud-login-form"><div class="field"><label for="cloud-email">อีเมล</label><input id="cloud-email" name="email" type="email" autocomplete="username" required></div>' +
-      '<div class="field"><label for="cloud-password">รหัสผ่าน</label><input id="cloud-password" name="password" type="password" autocomplete="current-password" required></div>' +
-      '<button class="btn">เข้าสู่ระบบ</button></form><div class="actions">' +
-      '<a id="recover-password" href="reset-password.html">ลืมรหัสผ่าน</a><a href="dashboard.html?mode=demo" class="btn secondary">ลองเดโม</a></div><p><a class="privacy-review-link" href="'+S.util.esc(window.SparkPrivacy.reviewHref())+'">การใช้ข้อมูลส่วนบุคคล</a></p></main>';
-    const box = document.querySelector('#cloud-login-error');
-    const form = document.querySelector('#cloud-login-form');
-    const show = text => { box.textContent = text; box.hidden = false; };
-    if (!configured()) {
-      form.hidden = true;
-      document.querySelector('#recover-password').hidden = true;
-      show('ผู้ดูแลยังไม่ได้เชื่อม Supabase สำหรับโหมดกลุ่ม');
-      return;
-    }
-    if (detail) show(detail);
-    form.onsubmit = async event => {
-      event.preventDefault();
-      const button = event.submitter;
-      button.disabled = true;
-      try {
-        const fields = new FormData(form);
-        remember(await request('/auth/v1/token?grant_type=password', {
-          email: String(fields.get('email')).trim(), password: fields.get('password')
-        }));
-        location.reload();
-      } catch (error) { show(error.message); }
-      finally { button.disabled = false; }
-    };
+    document.body.innerHTML = '<main class="cloud-login card"><a href="index.html" class="back-link">กลับหน้าหลักปลาศาลาหุม</a><h1>เข้าใช้งานของฉัน</h1><p>ใส่บัญชีที่ผู้ประสานจัดให้ เพื่อเปิดกระชังและงานของตัวเอง</p><p id="cloud-login-error" class="notice warning" role="alert" hidden></p><form id="cloud-login-form" style="margin-top:24px"><div class="field"><label for="cloud-email">อีเมลของบัญชี</label><input id="cloud-email" name="email" type="email" inputmode="email" autocapitalize="none" spellcheck="false" autocomplete="username" required></div><div class="field"><label for="cloud-password">รหัสผ่าน</label><div class="password-control"><input id="cloud-password" name="password" type="password" autocomplete="current-password" required><button class="btn secondary" type="button" id="show-password" aria-pressed="false" aria-controls="cloud-password">แสดง</button></div></div><button class="btn" type="submit">เข้าใช้งาน</button></form><div class="actions"><a id="recover-password" class="btn secondary" href="reset-password.html?mode=group">ลืมรหัสผ่าน</a></div><details class="friendly-details"><summary>ยังไม่มีบัญชี หรือเข้าใช้งานไม่ได้</summary><p>ติดต่อผู้ประสานประจำกลุ่มให้ช่วยเตรียมบัญชีหรือช่วยตรวจอีเมลกับรหัสผ่าน ผู้ประสานช่วยจดข้อมูลให้ได้หากยังไม่สะดวกใช้ด้วยตัวเอง</p></details><details class="friendly-details"><summary>อยากลองใช้ด้วยข้อมูลสมมติก่อน</summary><a href="dashboard.html?mode=demo&amp;as=farmer" class="btn secondary">ทดลองเป็นผู้เลี้ยงปลา</a></details><p style="margin-top:22px"><a class="privacy-review-link" href="'+S.util.esc(window.SparkPrivacy.reviewHref())+'">การใช้ข้อมูลส่วนบุคคล</a></p></main>';
+    const box=document.querySelector('#cloud-login-error'),form=document.querySelector('#cloud-login-form');
+    const show=text=>{box.textContent=text;box.hidden=false;box.tabIndex=-1;box.focus();};
+    document.querySelector('#show-password').onclick=event=>{const input=document.querySelector('#cloud-password'),visible=input.type==='password';input.type=visible?'text':'password';event.currentTarget.textContent=visible?'ซ่อน':'แสดง';event.currentTarget.setAttribute('aria-pressed',String(visible));};
+    if(!configured()){form.hidden=true;document.querySelector('#recover-password').hidden=true;show('กลุ่มนี้ยังไม่พร้อมเข้าใช้งาน ให้ผู้ประสานช่วยตรวจการเปิดใช้งานให้ก่อน');return;}
+    if(detail)show(detail);
+    form.onsubmit=async event=>{event.preventDefault();const button=event.submitter;button.disabled=true;button.textContent='กำลังเปิดข้อมูลของฉัน…';box.hidden=true;try{const fields=new FormData(form);remember(await request('/auth/v1/token?grant_type=password',{email:String(fields.get('email')).trim(),password:fields.get('password')}));location.reload();}catch(error){show(error.message);}finally{button.disabled=false;button.textContent='เข้าใช้งาน';}};
   }
 
   function get() {
@@ -160,9 +137,9 @@
         document.querySelector('main')?.prepend(bar);
       }
       bar.innerHTML = '<div><strong>ข้อมูลกลุ่ม</strong><p id="cloud-status" role="status"></p></div>' +
-        '<div class="actions"><button class="btn small secondary" id="cloud-refresh">โหลดข้อมูลล่าสุด</button>' +
+        '<div class="actions"><button class="btn small secondary" id="cloud-refresh">อัปเดตข้อมูล</button>' +
         '<button class="btn small secondary" id="cloud-logout">ออกจากระบบ</button></div>';
-      message(state.groupName + ' · ' + S.config.roleNames[S.util.user(state).role]);
+      message('เปิดข้อมูลล่าสุดของ '+state.groupName+' แล้ว');
       document.querySelector('#cloud-refresh').onclick = async event => {
         if (busy) return;
         const button = event.currentTarget;
@@ -171,7 +148,7 @@
         try {
           setState(await rpc('spark_pilot_read'));
           S.ui.render();
-          message('โหลดข้อมูลล่าสุดแล้ว · ' + state.groupName);
+          message('อัปเดตข้อมูลแล้ว · ' + state.groupName);
         } catch (error) { message(error.message); }
         finally { busy = false; button.disabled = false; }
       };

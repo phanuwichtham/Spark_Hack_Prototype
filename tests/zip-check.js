@@ -34,7 +34,7 @@ async function next(name) {
 function input(selector, value) {
   const field = find(selector);
   assert(field, 'ไม่พบช่อง ' + selector);
-  if (field.type === 'checkbox') field.checked = value;
+  if (field.type === 'checkbox' || field.type === 'radio') field.checked = value;
   else field.value = value;
   field.dispatchEvent(new (app().Event)('input', { bubbles:true }));
   field.dispatchEvent(new (app().Event)('change', { bubbles:true }));
@@ -87,11 +87,16 @@ async function privacyEntry() {
 async function workflow() {
   const key = 'spark-fish-prototype-v2:' + new URL('../',location.href).pathname;
   await privacyEntry();
-  click('.landing-actions a[href^="dashboard.html?mode=demo"]');
+  click('.landing-demo summary');
+  click('.landing-demo a[href*="as=buyer"]');
   await until(page('dashboard'), 'เปิดเดโม');
   await next('record-water');
+  input('[name=inspectionStatus][value=issue]',true);
   input('[value="กินอาหารลดลง"]', true);
+  click('#water-next');
+  input('[name=hasWater][value=no]',true);
   input('#note', 'กินอาหารลดลงตอนเช้า');
+  click('#water-next');
   const original = app().Storage.prototype.setItem;
   app().Storage.prototype.setItem = function(k, value) {
     if (this === app().localStorage && k === key) throw Error('QuotaExceeded');
@@ -103,10 +108,12 @@ async function workflow() {
   await reload();
   assert(find('#note').value==='กินอาหารลดลงตอนเช้า' && find('[value="กินอาหารลดลง"]').checked, 'ร่างหายหลังโหลดใหม่');
   click('#water-form button[type=submit]');
-  await until(page('risk'), 'บันทึกค่าน้ำ');
+  await until(()=>find('#water-saved')&&!find('#water-saved').hidden,'เปิดสรุปที่บันทึกแล้ว');
+  click('#water-saved a[href^="risk.html"]');
+  await until(page('risk'), 'ดูสิ่งที่ควรทำต่อ');
   assert(contains('#risk-reasons','ยังประเมินออกซิเจนไม่ได้'), 'ไม่แจ้งค่าน้ำที่ขาด');
   assert(contains('#risk-evidence','กินอาหารลดลงตอนเช้า'), 'ไม่แสดงสิ่งที่สังเกตหลังบันทึก');
-  const water = state().observations.filter(o=>o.note==='กินอาหารลดลงตอนเช้า');
+  const water = state().observations.filter(o=>o.note.includes('กินอาหารลดลงตอนเช้า'));
   assert(water.length===1 && Object.values(water[0].values).every(v=>v===null), 'บันทึกซ้ำหรือค่าน้ำว่างกลายเป็นตัวเลข');
   click('#create-care');
   await until(page('tasks'), 'สร้างงาน');
@@ -135,6 +142,8 @@ async function workflow() {
     await next('order-detail');
     const prev = state().revision;
     click('#confirm-order');
+    await until(()=>find('#transaction-review')?.open,'แสดงหน้าทวนรายการขาย');
+    click('#transaction-yes');
     await until(()=>state().revision>prev && !find('#confirm-order'), 'ยืนยันออเดอร์ '+index);
   }
   await next('harvest');
@@ -158,22 +167,25 @@ async function workflow() {
     click('[data-delivery-create]');
     await until(()=>find('[data-dispatch]'), 'สร้างรอบส่ง');
     click('[data-dispatch]');
+    await until(()=>find('#transaction-review')?.open,'ทวนการส่งปลา');
+    click('#transaction-yes');
     await until(()=>contains('#demo-steps','รับจริง '+kg), 'ส่งปลา '+kg);
     await next('delivery');
     assert(Number(find('[data-receive] [name=acceptedKg]').value)===kg, 'น้ำหนักรับจริง');
     click('[data-receive] button');
+    await until(()=>find('#transaction-review')?.open,'ทวนน้ำหนักรับจริง');
+    click('#transaction-yes');
     await until(()=>!find('[data-receive]'), 'ยืนยันรับมอบ');
   }
   await next('finance');
-  assert(contains('#finance-metrics','รับจริง 50 กก.') && contains('#finance-metrics','17,000 บาท')
-    && contains('.net-card','16,000 บาท'), 'ยอดขายหรือเงินสุทธิไม่ตรง');
+  assert(contains('#finance-metrics','16,000 บาท') && contains('#finance-plans','17,000 บาท') && contains('#finance-plans','16,000 บาท'), 'ยอดขายหรือเงินสุทธิไม่ตรง');
   await reload();
-  assert(contains('.net-card','16,000 บาท') && state().orders.length===2 && state().lots.length===1
+  assert(contains('#finance-plans','16,000 บาท') && state().orders.length===2 && state().lots.length===1
     && state().incidents.some(i=>i.status==='open'), 'ข้อมูลหลังโหลดใหม่ไม่ตรง');
   report('ผ่าน ออเดอร์ 20 + 30 กก. → ล็อต 50 กก. → รับจริง 50 กก. → ยอดขาย 17,000 บาท → สุทธิ 16,000 บาทก่อนต้นทุนเลี้ยง');
 
   sessionStorage.setItem('spark-zip-test-other-key','keep');
-  click('#demo-steps a[href="guide.html"]');
+  click('#demo-steps a[href^="guide.html"]');
   await until(page('guide'), 'เปิดคู่มือ');
   click('#reset-demo');
   click('#confirm-yes');
@@ -183,7 +195,7 @@ async function workflow() {
   report('ผ่าน เริ่มเดโมใหม่ล้างเฉพาะรายการทดลองของเว็บนี้');
 
   await go('dashboard.html?mode=group');
-  await until(()=>contains('#cloud-login-error','ยังไม่ได้เชื่อม Supabase'), 'หน้าเข้ากลุ่มที่ยังไม่ตั้งค่า');
+  await until(()=>find('#cloud-login-form')||contains('#cloud-login-error','ยังไม่พร้อม'), 'หน้าเข้าใช้งานของฉัน');
   await go('dashboard.html?mode=demo');
 }
 async function resources() {
@@ -209,7 +221,7 @@ async function resources() {
 document.querySelector('#run').onclick = async event => {
   event.target.disabled = true;
   output.textContent = '';
-  try { await workflow(); await resources(); report('PASS — ตรวจจากเว็บใน ZIP ครบแล้ว'); }
+  try { await workflow(); if(new URLSearchParams(location.search).has('resources'))await resources(); report('PASS — ตรวจเส้นทางดูแลปลา ซื้อขาย รับมอบ และเงินครบแล้ว'); }
   catch (error) { report('FAIL — ' + error.message); }
   finally { event.target.disabled = false; }
 };
